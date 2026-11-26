@@ -1,6 +1,7 @@
 import psutil
 import winreg
 import tkinter as tk 
+import subprocess
 from tkinter import ttk 
 from tkinter import messagebox
 import os 
@@ -8,20 +9,29 @@ import shutil
 root = tk.Tk()
 root.title('Optimizer')
 root.geometry('450x550')
+root.configure(bg='#1e1e1e')
+style = ttk.Style()
+style.theme_use('clam')
+style.configure('TNotebook', background='#1e1e1e', borderwidth=0)
+style.configure('TFrame', background='#1e1e1e')
+style.configure('TNotebook.tab', background = '#1e1e1e', borderwidht=0)
+style.map('TNotebook.Tab', background=[('selected', '#0078d7')])
+style.configure('TButton', background='#2d2d2d', foreground='white', borderwidth=1)
+style.map('TButton', background=[('active', '#3e3e3e')])
 notebook = ttk.Notebook(root)
 notebook.pack(fill='both', expand=True, padx= 10, pady= 10)
 tab1 = ttk.Frame(notebook)
 ram_bar = ttk.Progressbar(tab1, orient='horizontal', length=300, mode='determinate')
-ram_label = tk.Label(tab1, text='Оперативная память')
+ram_label = tk.Label(tab1, text='Оперативная память', bg='#1e1e1e', fg='white')
 ram_label.pack(pady=10)
 ram_bar.pack(pady=5)
-cpu_label = tk.Label(tab1, text='Процессор')
+cpu_label = tk.Label(tab1, text='Процессор', bg='#1e1e1e', fg='white')
 cpu_bar = ttk.Progressbar(tab1, orient='horizontal', length=300, mode='determinate')
 cpu_label.pack(pady=10)
 cpu_bar.pack(pady=5)
 disk = []
 for part in psutil.disk_partitions():
-    disk_label = tk.Label(tab1, text=f'Диск {part.device}')
+    disk_label = tk.Label(tab1, text=f'Диск {part.device}',bg='#1e1e1e', fg='white')
     disk_bar = ttk.Progressbar(tab1, orient='horizontal', length=300, mode='determinate')
     disk_label.pack(pady=5)
     disk_bar.pack(pady=5)
@@ -64,11 +74,11 @@ def clear_junk():
         except Exception:
             pass
     messagebox.showinfo('Готово', f'Удалено объектов: {deleted_count}')
-junk_label = tk.Label(tab2, text='Очистка временных файлов (TEMP)')
+junk_label = tk.Label(tab2, text='Очистка временных файлов (TEMP)', bg='#1e1e1e', fg='white')
 junk_label.pack(pady=10)
-junk_button = tk.Button(tab2, text='Очистить мусор', command=clear_junk)
+junk_button = tk.Button(tab2, text='Очистить мусор', command=clear_junk, bg='#1e1e1e', fg='white')
 junk_button.pack(pady=10)
-auto_label = tk.Label(tab3, text='Программы в автозагрузке')
+auto_label = tk.Label(tab3, text='Программы в автозагрузке', bg='#1e1e1e', fg='white')
 auto_label.pack(pady=10)
 auto_listbox = tk.Listbox(tab3, width=50, height=12)
 auto_listbox.pack(pady=5, padx=10)
@@ -115,4 +125,9 @@ enable_btn = tk.Button(tab3, text='Включить', command=lambda: toggle_sta
 enable_btn.pack(pady=5)
 disable_btn = tk.Button(tab3, text='Отключить', command=lambda: toggle_startup(False))
 disable_btn.pack(pady=5)
+def enable_ultimate_power():
+    subprocess.run(['powercfg', '-duplicatescheme', 'e9a42b02-d5df-448d-aa00-03f14749eb61'], creationflags=subprocess.CREATE_NO_WINDOW)
+    messagebox.showinfo('Готово', 'Схема «Максимальная производительность» добавлена!\nВключите её в Панели управления -> Электропитание.')
+power_btn = ttk.Button(tab2, text='Макс. производительность', command=enable_ultimate_power)
+power_btn.pack(pady=10)
 root.mainloop()
